@@ -21,7 +21,7 @@ class MainPage extends StatelessWidget {
               onPressed: () {
                 Navigator.pushNamed(context, '/recommendation', arguments: {
                   'weather': 'sunny',
-                  'temperature': 25.0,
+                  'temperature': ,
                 });
               },
               child: const Text('Go to Recommendation Page'),
