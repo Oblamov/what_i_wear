@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import '../StartScreen//startScreen.dart';
 
 class MainPage extends StatelessWidget {
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -21,7 +23,7 @@ class MainPage extends StatelessWidget {
               onPressed: () {
                 Navigator.pushNamed(context, '/recommendation', arguments: {
                   'weather': 'sunny',
-                  'temperature': ,
+                  'temperature': 25
                 });
               },
               child: const Text('Go to Recommendation Page'),
