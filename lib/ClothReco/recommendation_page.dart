@@ -43,31 +43,55 @@ class RecommendationPage extends StatelessWidget {
   }
 
   String getOutfitRecommendation(String weatherCondition, double temperature) {
-    if (weatherCondition == 'Yağmurlu' || weatherCondition.toLowerCase() == 'rainy') {
+    weatherCondition = weatherCondition.toLowerCase();
+
+    if (weatherCondition == 'rain' || weatherCondition == 'drizzle') {
       if (temperature <= 15) {
         return 'Yağmurluk, su geçirmez bot ve kalın giysiler giyin.';
       } else {
         return 'Yağmurluk, hafif giysiler ve su geçirmez ayakkabılar tercih edin.';
       }
-    } else if (weatherCondition == 'Karlı' || weatherCondition.toLowerCase() == 'snowy') {
+    } else if (weatherCondition == 'thunderstorm') {
+      return 'Dışarı çıkmaktan kaçının! Sağlam ayakkabılar ve su geçirmez mont giyin.';
+    } else if (weatherCondition == 'snow') {
       return 'Kalın mont, atkı, bere ve su geçirmez bot giyin.';
-    } else if (weatherCondition == 'Rüzgarlı' || weatherCondition.toLowerCase() == 'windy') {
+    } else if (weatherCondition == 'mist' || weatherCondition == 'fog' || weatherCondition == 'haze') {
+      return 'Görüş mesafesi düşük olabilir. Yansıtıcı giysiler ve dikkatli olun.';
+    } else if (weatherCondition == 'clouds') {
+      if (temperature <= 15) {
+        return 'Hafif mont ve uzun kollu giysiler tercih edin.';
+      } else {
+        return 'Hafif giysiler ve ince bir ceket tercih edin.';
+      }
+    } else if (weatherCondition == 'clear') {
+      if (temperature <= 15) {
+        return 'Hafif mont ve kalın giysiler giyin.';
+      } else if (temperature <= 25) {
+        return 'Uzun kollu giysiler ve hafif mont tercih edin.';
+      } else if (temperature <= 35) {
+        return 'T-shirt, şort ve güneş gözlüğü takın.';
+      } else {
+        return 'Çok sıcak! Hafif, nefes alabilir giysiler tercih edin ve bol su için.';
+      }
+    } else if (weatherCondition == 'windy' || weatherCondition == 'squall') {
       if (temperature <= 15) {
         return 'Rüzgarlık ve kalın giysiler tercih edin.';
       } else {
         return 'Hafif rüzgarlık ve rahat giysiler tercih edin.';
       }
-    } else if (weatherCondition == 'Güneşli' || weatherCondition.toLowerCase() == 'sunny') {
-      if (temperature <= 15) {
-        return 'Kalın giysiler ve hafif mont giyin.';
-      } else if (temperature <= 35) {
-        return 'T-shirt, şort ve güneş gözlüğü takın.';
-      } else {
-        return 'Çok sıcak! Hafif, nefes alabilir giysiler tercih edin.';
-      }
+    } else if (weatherCondition == 'smoke' || weatherCondition == 'sand' || weatherCondition == 'dust') {
+      return 'Koruyucu maske takın ve mümkünse dışarı çıkmaktan kaçının.';
+    } else if (weatherCondition == 'hot') {
+      return 'Çok sıcak hava! Hafif ve nefes alabilir giysiler tercih edin, bol su için.';
+    } else if (weatherCondition == 'cold') {
+      return 'Çok soğuk hava! Kalın mont, bere ve eldiven kullanın.';
+    } else if (weatherCondition == 'tornado') {
+      return 'Acil durum uyarılarını takip edin ve güvenli bir alana sığının.';
     } else {
-      return 'Geçersiz hava durumu bilgisi.';
+      return 'Bu hava durumu için özel bir öneri yok.';
     }
   }
+
+
 
 }

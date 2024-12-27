@@ -1,10 +1,16 @@
 import 'package:flutter/material.dart';
-import '../StartScreen//startScreen.dart';
+import '../StartScreen/startScreen.dart';
 
 class MainPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final Map<String, dynamic> args =
+        ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>? ?? {};
+
+    String weather = args['weather'] ?? 'Unknown';
+    double temperature = args['temperature'] ?? 0.0;
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Main Page'),
@@ -14,16 +20,20 @@ class MainPage extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Text(
-              'Welcome to the Main Page!',
+            Text(
+              'Weather: $weather',
               style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
-            const SizedBox(height: 20),
+            Text(
+              'Temperature: ${temperature.toStringAsFixed(1)} °C',
+              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+            ),
+            SizedBox(height: 20),
             ElevatedButton(
               onPressed: () {
                 Navigator.pushNamed(context, '/recommendation', arguments: {
-                  'weather': 'sunny',
-                  'temperature': 25
+                  'weather': weather,
+                  'temperature': temperature,
                 });
               },
               child: const Text('Go to Recommendation Page'),
@@ -33,4 +43,5 @@ class MainPage extends StatelessWidget {
       ),
     );
   }
+
 }
