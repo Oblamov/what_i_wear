@@ -1,0 +1,11 @@
+<resources>
+    <string name="firebase_database_url">https://whatiwear-f6f1f-default-rtdb.firebaseio.com/</string>
+    <string name="gcm_defaultSenderId">1071482461546</string>
+    <string name="google_api_key">AIzaSyAWQtNdxI6oXH9ClCW5begDCV-7FfM5zqg
+</string>
+    <string name="google_app_id">1:1071482461546:android:b14bc0e647be7c7b1ed913
+</string>
+    <string name="google_crash_reporting_api_key">AIzaSyAWQtNdxI6oXH9ClCW5begDCV-7FfM5zqg
+</string>
+    <string name="project_id">whatiwear-f6f1f</string>
+</resources>

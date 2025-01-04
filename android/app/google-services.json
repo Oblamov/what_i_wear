@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1071482461546",
+    "project_id": "whatiwear-f6f1f",
+    "storage_bucket": "whatiwear-f6f1f.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1071482461546:android:b14bc0e647be7c7b1ed913",
+        "android_client_info": {
+          "package_name": "com.example.weath_i_wear"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAWQtNdxI6oXH9ClCW5begDCV-7FfM5zqg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

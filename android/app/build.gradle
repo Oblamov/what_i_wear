@@ -1,8 +1,9 @@
-
+// Plugins
 plugins {
     id "com.android.application"
     id "kotlin-android"
     id "dev.flutter.flutter-gradle-plugin"
+    id 'com.google.gms.google-services'
 }
 
 def localProperties = new Properties()
@@ -23,11 +24,11 @@ if (flutterVersionName == null) {
     flutterVersionName = '1.0'
 }
 
+// Android Configuration
 android {
-
     namespace "com.example.weath_i_wear"
-    compileSdk 34
-    ndkVersion flutter.ndkVersion
+    compileSdkVersion 34
+    ndkVersion "25.2.9519653" // Define NDK version manually
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
@@ -43,28 +44,31 @@ android {
     }
 
     defaultConfig {
-        // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
         applicationId "com.example.weath_i_wear"
-        // You can update the following values to match your application needs.
-        // For more information, see: https://docs.flutter.dev/deployment/android#reviewing-the-gradle-build-configuration.
-        minSdkVersion flutter.minSdkVersion
-        targetSdkVersion flutter.targetSdkVersion
+        minSdkVersion 23
+        targetSdkVersion 34
         versionCode 1
-        versionName "1"
+        versionName "1.0.0"
     }
 
     buildTypes {
         release {
-            // TODO: Add your own signing config for the release build.
-            // Signing with the debug keys for now, so `flutter run --release` works.
-
             signingConfig signingConfigs.debug
+            minifyEnabled false
+            shrinkResources false
         }
     }
 }
 
+// Flutter Settings
 flutter {
     source '../..'
 }
 
-dependencies {}
+// Dependencies
+dependencies {
+    implementation platform('com.google.firebase:firebase-bom:33.7.0')
+    implementation 'com.google.firebase:firebase-analytics'
+    implementation 'androidx.core:core-ktx:1.10.1'
+}
+apply plugin: 'com.google.gms.google-services'
