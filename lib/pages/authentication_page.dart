@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'startScreen.dart';
 
 class AuthenticationPage extends StatefulWidget {
   @override
@@ -14,21 +15,37 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
   Future<void> _authenticateUser() async {
     if (_formKey.currentState!.validate()) {
       try {
+        print('🔄 Attempting Authentication...');
         await FirebaseAuth.instance.signInWithEmailAndPassword(
           email: _emailController.text.trim(),
           password: _passwordController.text.trim(),
         );
+        print('✅ Authentication Successful!');
+
+        // Navigate to the StartScreen
         Navigator.pushReplacementNamed(context, '/start');
       } on FirebaseAuthException catch (e) {
+        print('❌ FirebaseAuthException: ${e.code} - ${e.message}');
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(e.message ?? 'Authentication failed'),
             backgroundColor: Colors.red,
           ),
         );
+      } catch (e) {
+        print('❌ Unexpected Error: $e');
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('An unexpected error occurred. Please try again.'),
+            backgroundColor: Colors.red,
+          ),
+        );
       }
+    } else {
+      print('❌ Form Validation Failed');
     }
   }
+
 
   @override
   Widget build(BuildContext context) {

@@ -120,4 +120,10 @@ class _StartScreenState extends State<StartScreen> {
       ),
     );
   }
+
+  @override
+  void dispose() {
+    _cityController.dispose();
+    super.dispose();
+  }
 }
