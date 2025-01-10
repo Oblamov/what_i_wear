@@ -66,6 +66,7 @@ class _MainPageState extends State<MainPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Weather in ${widget.city}'),
+        centerTitle: true,
         backgroundColor: Colors.teal,
       ),
       body: isLoading
