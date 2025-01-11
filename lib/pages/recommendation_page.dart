@@ -1,19 +1,14 @@
 import 'package:flutter/material.dart';
-import 'dart:convert';
 import 'dart:io';
-import 'package:http/http.dart' as http;
 import '../controllers/weather_controller.dart';
 import '../models/weather_model.dart';
 import '../models/clothing_item.dart';
 import '../services/api_service.dart';
-import '../pages/wardrobe_page.dart' as war;
-
 
 class RecommendationPage extends StatefulWidget {
   final String city;
   final List<ClothingItem> wardrobe;
-
-  final Weather weather; // Pass weather data
+  final Weather weather;
 
   RecommendationPage({
     required this.city,
@@ -25,20 +20,15 @@ class RecommendationPage extends StatefulWidget {
   _RecommendationPageState createState() => _RecommendationPageState();
 }
 
-
 class _RecommendationPageState extends State<RecommendationPage> {
-  final WeatherController weatherController = WeatherController();
-  Weather? weatherData;
-  bool isLoading = false; //change to true for real state
+  bool isLoading = false;
   String errorMessage = '';
   List<ClothingItem> recommendedOutfit = [];
   String? aiRecommendation;
-  List<ClothingItem> wardrobe = [];
 
   @override
   void initState() {
     super.initState();
-    print('👗 Wardrobe Item Count on RecommendationPage: ${wardrobe.length}');
     _filterOutfit();
   }
 
@@ -130,6 +120,73 @@ class _RecommendationPageState extends State<RecommendationPage> {
       recommendedOutfit = filteredItems; // Tüm uygun kıyafetler gösterilecek
     });
   }
+
+  List<ClothingItem> _filterWardrobeByWeather({
+    required double temperature,
+    required double humidity,
+    required double windSpeed,
+  }) {return widget.wardrobe.where((item) {
+    return item.minTemperature <= temperature &&
+        item.maxTemperature >= temperature &&
+        item.minHumidity <= humidity &&
+        item.maxHumidity >= humidity &&
+        item.minWindSpeed <= windSpeed &&
+        item.maxWindSpeed >= windSpeed;
+  }).toList();
+  }
+
+  Widget _buildWeatherCard() {
+    return Container(
+      padding: EdgeInsets.all(16.0),
+      decoration: BoxDecoration(
+        color: Colors.black.withOpacity(0.7), // Transparan siyah
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'City: ${widget.weather.city}',
+            style: TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+              color: Colors.white,
+            ),
+          ),
+          SizedBox(height: 8),
+          Text(
+            'Weather: ${widget.weather.weatherCondition}',
+            style: TextStyle(
+              fontSize: 18,
+              color: Colors.white,
+            ),
+          ),
+          Text(
+            'Temperature: ${widget.weather.temperature.toStringAsFixed(1)}°C',
+            style: TextStyle(
+              fontSize: 18,
+              color: Colors.white,
+            ),
+          ),
+          Text(
+            'Humidity: ${widget.weather.humidity.toString()}%',
+            style: TextStyle(
+              fontSize: 18,
+              color: Colors.white,
+            ),
+          ),
+          Text(
+            'Wind Speed: ${widget.weather.windSpeed.toString()} km/h',
+            style: TextStyle(
+              fontSize: 18,
+              color: Colors.white,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _buildWeatherSuitableWardrobeList() {
     final double temperature = widget.weather.temperature;
     final double humidity = widget.weather.humidity ?? 0.0;
@@ -155,14 +212,21 @@ class _RecommendationPageState extends State<RecommendationPage> {
       groupedItems[item.primaryCategory]![item.subCategory]?.add(item);
     }
 
-    return filteredItems.isEmpty
-        ? Center(
-      child: Text(
-        'No suitable clothes found for current weather conditions.',
-        style: TextStyle(fontSize: 16, color: Colors.grey),
-      ),
-    )
-        : ListView.builder(
+    // Eğer uygun kıyafet yoksa bir mesaj göster
+    if (filteredItems.isEmpty) {
+      return Center(
+        child: Text(
+          'No suitable clothes found for current weather conditions.',
+          style: TextStyle(
+            fontSize: 16,
+            color: Colors.white60, // Slightly dimmer white
+          ),
+        ),
+      );
+    }
+
+    // ListView içinde kategorileri, alt kategorileri ve öğeleri göster
+    return ListView.builder(
       shrinkWrap: true,
       physics: NeverScrollableScrollPhysics(),
       itemCount: groupedItems.keys.length,
@@ -171,16 +235,28 @@ class _RecommendationPageState extends State<RecommendationPage> {
         Map<String, List<ClothingItem>> subCategories = groupedItems[category]!;
 
         return ExpansionTile(
+          // Category Title
           title: Text(
             category,
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              color: Colors.white, // White text
+            ),
           ),
+          // Subcategories
           children: subCategories.keys.map((subCategory) {
             return ExpansionTile(
+              // Subcategory Title
               title: Text(
                 subCategory,
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w800,
+                  color: Colors.white, // White text
+                ),
               ),
+              // Items in this subcategory
               children: subCategories[subCategory]!.map((item) {
                 return ListTile(
                   leading: Image.file(
@@ -191,9 +267,16 @@ class _RecommendationPageState extends State<RecommendationPage> {
                   ),
                   title: Text(
                     item.uniqueName,
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 14,
+                      color: Colors.white, // White text
+                    ),
                   ),
-                  subtitle: Text(item.tags.join(', ')),
+                  subtitle: Text(
+                    item.tags.join(', '),
+                    style: TextStyle(color: Colors.white70), // Slightly dimmer white
+                  ),
                 );
               }).toList(),
             );
@@ -201,21 +284,6 @@ class _RecommendationPageState extends State<RecommendationPage> {
         );
       },
     );
-  }
-
-  // Filter wardrobe items based on weather conditions
-  List<ClothingItem> _filterWardrobeByWeather({
-    required double temperature,
-    required double humidity,
-    required double windSpeed,
-  }) {return widget.wardrobe.where((item) {
-      return item.minTemperature <= temperature &&
-          item.maxTemperature >= temperature &&
-          item.minHumidity <= humidity &&
-          item.maxHumidity >= humidity &&
-          item.minWindSpeed <= windSpeed &&
-          item.maxWindSpeed >= windSpeed;
-    }).toList();
   }
 
   void _generateOutfit() async {
@@ -239,92 +307,141 @@ class _RecommendationPageState extends State<RecommendationPage> {
       });
     }
   }
+  @override
+    Widget build(BuildContext context) {
+      return Scaffold(
+        backgroundColor: Colors.grey[900], // Koyu gri arka plan
+        body: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Custom AppBar
+                Row(
+                  children: [
+                    IconButton(
+                      icon: Icon(Icons.arrow_back, color: Colors.white),
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                    ),
+                    Text(
+                      'Recommendations for ${widget.city}',
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(height: 20),
 
-  Widget build(BuildContext context) {
-    print("🛠️ Build Method Triggered");
-    print("🌤️ Weather City: ${widget.weather.city}");
-    print("🌡️ Weather Temperature: ${widget.weather.temperature}");
-    print("💧 Weather Humidity: ${widget.weather.humidity}");
-    print("💨 Weather Wind Speed: ${widget.weather.windSpeed}");
-    print("👗 Wardrobe Items: ${widget.wardrobe.length}");
-    print("🤖 AI Recommendation: $aiRecommendation");
-    print("🔄 Loading State: $isLoading");
-    print("❌ Error Message: $errorMessage");
+                // İçerik
+                Expanded(
+                  child: isLoading
+                      ? Center(child: CircularProgressIndicator(color: Colors.teal))
+                      : errorMessage.isNotEmpty
+                      ? Center(
+                    child: Text(
+                      errorMessage,
+                      style: TextStyle(
+                          fontSize: 16, color: Colors.red),
+                      textAlign: TextAlign.center,
+                    ),
+                  )
+                      : SingleChildScrollView(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        // 🌤️ Weather Details
+                        _buildWeatherCard(),
+                        SizedBox(height: 20),
 
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Recommendation for ${widget.city}'),
-        backgroundColor: Colors.teal,
-      ),
-      body: isLoading
-          ? Center(child: CircularProgressIndicator()) // Show loading spinner
-          : errorMessage.isNotEmpty
-          ? Center(
-        child: Text(
-          errorMessage,
-          style: TextStyle(fontSize: 16, color: Colors.red),
-          textAlign: TextAlign.center,
-        ),
-      ) // Show error message
-          : Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // 🌤️ Weather Details
-              Text('City: ${widget.weather.city}',
-                  style: TextStyle(fontSize: 20)),
-              Text('Weather: ${widget.weather.weatherCondition}',
-                  style: TextStyle(fontSize: 18)),
-              Text(
-                  'Temperature: ${widget.weather.temperature.toStringAsFixed(1)}°C',
-                  style: TextStyle(fontSize: 18)),
-              Text('Humidity: ${widget.weather.humidity.toString()}%',
-                  style: TextStyle(fontSize: 18)),
-              Text('Wind Speed: ${widget.weather.windSpeed.toString()} km/h',
-                  style: TextStyle(fontSize: 18)),
-              SizedBox(height: 20),
+                        // 👗 Recommended Wardrobe Items
+                        Text(
+                          textAlign: TextAlign.center,
+                          '👗 Clothes Suitable for Current Weather',
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
+                        ),
+                        _buildWeatherSuitableWardrobeList(),
 
-              // 👗 Recommended Wardrobe Items
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Text('👗 Clothes Suitable for Current Weather:',
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-              ),
-              _buildWeatherSuitableWardrobeList(),
-              SizedBox(height: 20),
+                        // 🔄 Refresh Button
+                        SizedBox(height: 20),
+                        Center(
+                          child: ElevatedButton.icon(
+                            onPressed: _generateOutfit,
+                            icon: Icon(Icons.refresh),
+                            label: Text('Generate New Recommendation'),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.orange, // Turuncu buton
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: 20, vertical: 12),
+                            ),
+                          ),
+                        ),
 
-              Text('AI-Generated Recommendation:',
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-              SizedBox(height: 10),
-              aiRecommendation != null
-                  ? Text(
-                aiRecommendation!,
-                style: TextStyle(fontSize: 16, color: Colors.grey[700]),
-                textAlign: TextAlign.justify,
-              )
-                  : Text(
-                'No AI Recommendation yet.',
-                style: TextStyle(fontSize: 16, color: Colors.grey[400]),
-              ),
-              SizedBox(height: 20),
-// 🔄 Refresh Button
-              Center(
-                child: ElevatedButton.icon(
-                  onPressed: _generateOutfit,
-                  icon: Icon(Icons.refresh),
-                  label: Text('Generate New Recommendation'),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.teal,
-                    padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                        // OpenAI Bölümü
+                        SizedBox(height: 20),
+
+// Wrap AI recommendation text in a center-aligned container
+                        SizedBox(height: 20),
+                        Center(
+                          child: Container(
+                            width: double.infinity, // Fill the available width
+                            margin: EdgeInsets.symmetric(horizontal: 16.0),
+                            padding: EdgeInsets.all(16.0),
+                            decoration: BoxDecoration(
+                              color: Colors.black12, // Semi-transparent box color
+                              borderRadius: BorderRadius.circular(8.0),
+                            ),
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,            // Wrap content vertically
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                // Image above the text
+                                Image.asset(
+                                  color: Colors.white,
+                                  'assets/openai.png', // Replace with your image path
+                                  width: 64,
+                                  height: 64,
+                                  fit: BoxFit.cover,
+                                ),
+                                SizedBox(height: 12), // Spacing between image and text
+
+                                // AI recommendation text
+                                aiRecommendation != null
+                                    ? Text(
+                                  aiRecommendation!,
+                                  style: TextStyle(fontSize: 16, color: Colors.white),
+                                  textAlign: TextAlign.center,
+                                )
+                                    : Text(
+                                  'No AI Recommendation yet.',
+                                  style: TextStyle(fontSize: 16, color: Colors.white),
+                                  textAlign: TextAlign.center,
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                        SizedBox(height: 40),
+
+// ...
+
+                      ],
+                    ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
-      ),
-    );
-  }
+      );
+    }
 }

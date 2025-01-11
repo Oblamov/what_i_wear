@@ -47,7 +47,7 @@ ${payload['available_items'].entries.map((category) {
 Just fill that table and dont give me any explanation. And if some field is empty just stay empty.
 If a category has more than one subcategory with an appropriate outfit, randomly select one from each of the appropriate subcategories for the parent category.
               
-1)
+
 Upper Body:
 Lower Body:
 Accessories:
@@ -55,7 +55,7 @@ Shoes:
 Head Wear:
                
                
-2)
+
 Full Body:
 Accessories:
 Shoes:

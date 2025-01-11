@@ -29,7 +29,6 @@ class _MainPageState extends State<MainPage> {
     _loadWardrobeData();
   }
 
-  /// Fetch Weather Data from API
   Future<void> _loadWeatherData() async {
     try {
       final weather = await weatherController.getWeather(widget.city);
@@ -45,7 +44,6 @@ class _MainPageState extends State<MainPage> {
     }
   }
 
-  /// Load Wardrobe Data (Example Dummy Data)
   void _loadWardrobeData() async {
     final prefs = await SharedPreferences.getInstance();
     final wardrobeData = prefs.getStringList('wardrobe');
@@ -61,90 +59,218 @@ class _MainPageState extends State<MainPage> {
     }
   }
 
+  String _getBackgroundImage(String? condition) {
+    if (condition == null) {
+      return 'assets/default.png';
+    }
+    switch (condition.toLowerCase()) {
+      case 'clear sky':
+        return 'assets/sunny.png';
+      case 'rain':
+        return 'assets/rainy.png';
+      case 'snow':
+        return 'assets/snowy.png';
+      case 'clouds':
+        return 'assets/cloudy.png';
+      case 'shower rain':
+        return 'assets/rainy.png';
+      case 'broken clouds':
+        return 'assets/cloudy.png';
+      case 'scattered clouds':
+        return 'assets/cloudy.png';
+      case 'few clouds':
+        return 'assets/cloudy.png';
+      case 'thunderstorm':
+        return 'assets/rainy.png';
+      case 'mist':
+        return 'assets/misty.png';
+      case 'overcast clouds':
+        return 'assets/cloudy.png';
+      default:
+        return 'assets/deafult.png';
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Weather in ${widget.city}'),
-        centerTitle: true,
-        backgroundColor: Colors.teal,
-      ),
-      body: isLoading
-          ? Center(child: CircularProgressIndicator())
-          : errorMessage.isNotEmpty
-          ? Center(child: Text('Error: $errorMessage'))
-          : Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            // Weather Details
-            Text('City: ${weatherData?.city ?? 'N/A'}',
-                style: TextStyle(fontSize: 20)),
-            Text(
-                'Weather: ${weatherData?.weatherCondition ?? 'N/A'}',
-                style: TextStyle(fontSize: 18)),
-            Text(
-                'Temperature: ${weatherData?.temperature.toStringAsFixed(1) ?? 'N/A'}°C',
-                style: TextStyle(fontSize: 18)),
-            SizedBox(height: 30),
-
-            // Navigation Buttons
-            ElevatedButton.icon(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => WardrobePage(),
-                  ),
-                );
-              },
-              icon: Icon(Icons.checkroom),
-              label: Text('Go to Wardrobe'),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.blueAccent,
-                padding: EdgeInsets.symmetric(
-                    horizontal: 30, vertical: 12),
+      body: Stack(
+        children: [
+          // Arka Plan
+          Container(
+            decoration: BoxDecoration(
+              image: DecorationImage(
+                image: AssetImage(
+                  _getBackgroundImage(weatherData?.weatherCondition),
+                ),
+                fit: BoxFit.cover,
               ),
             ),
-            SizedBox(height: 10),
-        ElevatedButton.icon(
-          onPressed: () {
-            if (weatherData != null) {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) {
-                    print("🌤️ Navigating to RecommendationPage");
-                    print("🔄 Weather Data: ${weatherData?.temperature}, ${weatherData?.humidity}, ${weatherData?.windSpeed}");
-                    print("👗 Wardrobe Item Count: ${wardrobe.length}");
-
-                    return RecommendationPage(
-                      city: widget.city,
-                      wardrobe: wardrobe, // Güncel listeyi aktar
-                      weather: weatherData!,
-                    );
-                  },
-                ),
-              );
-            } else {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text('Weather data not loaded. Please wait.'),
-                  backgroundColor: Colors.red,
-                ),
-              );
-            }
-          },
-          icon: Icon(Icons.recommend),
-          label: Text('Get Recommendations'),
-          style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.greenAccent,
-            padding: EdgeInsets.symmetric(horizontal: 30, vertical: 12),
           ),
-        ),
+          // Geri Dön Tuşu
+          Positioned(
+            top: 40,
+            left: 16,
+            child: IconButton(
+              icon: Icon(
+                Icons.arrow_back,
+                color: Colors.white,
+              ),
+              onPressed: () {
+                Navigator.pop(context);
+              },
+            ),
+          ),
+          // İçerik
+          isLoading
+              ? Center(child: CircularProgressIndicator())
+              : errorMessage.isNotEmpty
+              ? Center(child: Text('Error: $errorMessage'))
+              : Center(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                // Şeffaf Bilgi Kutusu
+                Container(
+                  padding: EdgeInsets.all(16.0),
+                  decoration: BoxDecoration(
+                    color: Colors.black.withOpacity(0.5),
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      // Şehir Adı
+                      Text(
+                        weatherData?.city ?? 'City',
+                        style: TextStyle(
+                          fontSize: 28,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
+                      ),
+                      SizedBox(height: 10),
+
+                      // Derece (Sıcaklık)
+                      Text(
+                        '${weatherData?.temperature.toStringAsFixed(1) ?? 'N/A'}°C',
+                        style: TextStyle(
+                          fontSize: 60, // Büyük font
+                          fontWeight: FontWeight.bold,
+                          color: Colors.orangeAccent,
+                        ),
+                      ),
+                      SizedBox(height: 10),
+
+                      // Hava Durumu Bilgisi
+                      Text(
+                        weatherData?.weatherCondition?.toUpperCase() ??
+                            'N/A',
+                        style: TextStyle(
+                          fontSize: 24,
+                          fontWeight: FontWeight.w500,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                SizedBox(height: 30),
+
+                // Düzenlenmiş Butonlar (Alt Alta ve Büyük)
+                SizedBox(
+                  width: MediaQuery.of(context).size.width * 0.8,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => WardrobePage(),
+                        ),
+                      );
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.black.withOpacity(0.7), // Siyah ve şeffaf
+                      padding: EdgeInsets.symmetric(vertical: 16),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(30),
+                      ),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(Icons.checkroom, color: Colors.white),
+                        SizedBox(width: 10),
+                        Text(
+                          'Go to Wardrobe',
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                SizedBox(height: 20),
+                SizedBox(
+                  width: MediaQuery.of(context).size.width * 0.8,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      if (weatherData != null) {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) {
+                              return RecommendationPage(
+                                city: widget.city,
+                                wardrobe: wardrobe,
+                                weather: weatherData!,
+                              );
+                            },
+                          ),
+                        );
+                      } else {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(
+                                'Weather data not loaded. Please wait.'),
+                            backgroundColor: Colors.red,
+                          ),
+                        );
+                      }
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.black.withOpacity(0.7), // Siyah ve şeffaf
+                      padding: EdgeInsets.symmetric(vertical: 16),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(30),
+                      ),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(Icons.recommend, color: Colors.white),
+                        SizedBox(width: 10),
+                        Text(
+                          'Get Recommendations',
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
         ],
-        ),
       ),
     );
   }

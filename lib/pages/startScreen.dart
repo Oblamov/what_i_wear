@@ -52,7 +52,7 @@ class _StartScreenState extends State<StartScreen> {
                   // App Title
                   ShaderMask(
                     shaderCallback: (bounds) => LinearGradient(
-                      colors: [Colors.blueAccent, Colors.purpleAccent],
+                      colors: [Colors.orange, Colors.deepOrangeAccent],
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
                     ).createShader(bounds),
@@ -92,7 +92,7 @@ class _StartScreenState extends State<StartScreen> {
                         filled: true,
                         fillColor: Colors.white,
                         hintText: "Enter City",
-                        prefixIcon: Icon(Icons.location_city, color: Colors.blueAccent),
+                        prefixIcon: Icon(Icons.location_city, color: Colors.orange),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(100),
                           borderSide: BorderSide.none,
@@ -108,7 +108,7 @@ class _StartScreenState extends State<StartScreen> {
                     onPressed: _navigateToMainPage,
                     child: Text('Get Weather'),
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.blueAccent,
+                      backgroundColor: Colors.orange, // Turuncu renk
                       padding: EdgeInsets.symmetric(horizontal: 30, vertical: 12),
                     ),
                   ),

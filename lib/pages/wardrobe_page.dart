@@ -324,65 +324,97 @@ class _WardrobePageState extends State<WardrobePage> {
       _selectedSubCategory = categoryMap[_selectedCategory]!.first;
     }
 
-    return  Scaffold(
+    return Scaffold(
       appBar: AppBar(
-        title: Text('Wardrobe'),
+        title: const Text('Wardrobe',
+          style: TextStyle(
+            fontSize: 18,
+
+            fontWeight: FontWeight.bold,
+            color: Colors.white, // White text
+          ),
+        ),
+        backgroundColor: Colors.grey[900], // Dark grey app bar
+        iconTheme: IconThemeData(color: Colors.white), // Back button and other icons to white
         actions: [
           IconButton(
-            icon: Icon(Icons.refresh),
+            icon: Icon(Icons.refresh, color: Colors.white,),
             tooltip: 'Reset Wardrobe Data',
             onPressed: _clearWardrobeData,
           ),
         ],
       ),
-      body: groupedWardrobe.isEmpty
-          ? Center(
-        child: Text(
-          'No items in your wardrobe yet.',
-          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-        ),
-      )
-          : ListView.builder(
-        itemCount: groupedWardrobe.keys.length,
-        itemBuilder: (context, categoryIndex) {
-          String category = groupedWardrobe.keys.elementAt(categoryIndex);
-          Map<String, List<ClothingItem>> subCategories = groupedWardrobe[category]!;
-
-          return ExpansionTile(
-            title: Text(
-              category,
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+      body: Container(
+        color: Colors.grey[850], // Dark grey background
+        child: groupedWardrobe.isEmpty
+            ? Center(
+          child: Text(
+            'No items in your wardrobe yet.',
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              color: Colors.white, // White text
             ),
-            children: subCategories.keys.map((subCategory) {
-              return ExpansionTile(
-                title: Text(
-                  subCategory,
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+          ),
+        )
+            : ListView.builder(
+          itemCount: groupedWardrobe.keys.length,
+          itemBuilder: (context, categoryIndex) {
+            String category = groupedWardrobe.keys.elementAt(categoryIndex);
+            Map<String, List<ClothingItem>> subCategories =
+            groupedWardrobe[category]!;
+
+            return ExpansionTile(
+              title: Text(
+                category,
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white, // White text
                 ),
-                children: subCategories[subCategory]!.map((item) {
-                  return ListTile(
-                    leading: Image.file(
-                      File(item.imagePath),
-                      width: 50,
-                      height: 50,
-                      fit: BoxFit.cover,
+              ),
+              children: subCategories.keys.map((subCategory) {
+                return ExpansionTile(
+                  title: Text(
+                    subCategory,
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500,
+                      color: Colors.white, // White text
                     ),
-                    title: Text(
-                      item.uniqueName, // SubCategory yerine benzersiz isim gösteriliyor.
-                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
-                    ),
-                    subtitle: Text(item.tags.join(', ')), // Etiket bilgileri gösteriliyor.
-                    trailing: IconButton(
-                      icon: Icon(Icons.delete, color: Colors.red),
-                      onPressed: () => _deleteClothingItem(wardrobe.indexOf(item)),
-                    ),
-                    onTap: () => _showItemDetails(item),
-                  );
-                }).toList(),
-              );
-            }).toList(),
-          );
-        },
+                  ),
+                  children: subCategories[subCategory]!.map((item) {
+                    return ListTile(
+                      leading: Image.file(
+                        File(item.imagePath),
+                        width: 50,
+                        height: 50,
+                        fit: BoxFit.cover,
+                      ),
+                      title: Text(
+                        item.uniqueName,
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 14,
+                          color: Colors.white, // White text
+                        ),
+                      ),
+                      subtitle: Text(
+                        item.tags.join(', '),
+                        style: TextStyle(color: Colors.white70), // Slightly faded white
+                      ),
+                      trailing: IconButton(
+                        icon: Icon(Icons.delete, color: Colors.red),
+                        onPressed: () => _deleteClothingItem(wardrobe.indexOf(item)),
+                      ),
+                      onTap: () => _showItemDetails(item),
+                    );
+                  }).toList(),
+                );
+              }).toList(),
+            );
+          },
+        ),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: _showAddClothingDialog,
