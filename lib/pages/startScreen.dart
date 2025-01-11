@@ -39,7 +39,7 @@ class _StartScreenState extends State<StartScreen> {
           // Background Image
           Positioned.fill(
             child: Image.asset(
-              'assets/startscreenBackground.jpeg',
+              'assets/startscreenpage1.png',
               fit: BoxFit.cover,
             ),
           ),
@@ -62,7 +62,7 @@ class _StartScreenState extends State<StartScreen> {
                         fontFamily: 'DEBROSEE',
                         fontSize: 45,
                         fontWeight: FontWeight.bold,
-                        color: Colors.redAccent.shade200,
+                        color: Colors.white,
                         letterSpacing: 1.5,
                         shadows: [
                           Shadow(

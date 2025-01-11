@@ -55,9 +55,12 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Login'),
-        centerTitle: true,
-      ),
+        title: Text(
+          'Login',
+          style: TextStyle(color: Colors.orange), // Başlık rengini turuncu yap
+        ),
+        backgroundColor: Colors.black, // Karanlık tema
+        centerTitle: true,      ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Form(
@@ -106,10 +109,11 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
                   return null;
                 },
               ),
-              SizedBox(height: 24),
+              SizedBox(height: 30),
               ElevatedButton(
                 onPressed: _authenticateUser,
                 style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.orange,
                   padding: EdgeInsets.symmetric(horizontal: 40, vertical: 12),
                   textStyle: TextStyle(fontSize: 16),
                 ),
@@ -126,8 +130,10 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
                   );
                 },
                 style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.orange,
                   padding: EdgeInsets.symmetric(horizontal: 40, vertical: 12),
                   textStyle: TextStyle(fontSize: 16),
+
                 ),
                 child: Text('Sign up'),
               ),
@@ -200,9 +206,18 @@ class _SignUpPageState extends State<SignUpPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Sign Up'),
+
+        backgroundColor: Colors.black, // Arka plan siyah
+        title: Text(
+          'Sign Up',
+          style: TextStyle(color: Colors.orange), // Yazı turuncu
+        ),
+        iconTheme: IconThemeData(
+          color: Colors.orange, // Geri dönme tuşu rengi turuncu
+        ),
         centerTitle: true,
       ),
+
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Form(
@@ -255,6 +270,7 @@ class _SignUpPageState extends State<SignUpPage> {
               ElevatedButton(
                 onPressed: _registerUser,
                 style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.orange,
                   padding: EdgeInsets.symmetric(horizontal: 40, vertical: 12),
                   textStyle: TextStyle(fontSize: 16),
                 ),
