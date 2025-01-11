@@ -33,7 +33,7 @@ dev_dependencies:
 
 flutter:
   assets:
-    - assets/startscreenpage1.png
+    - assets/startscreenBackground.jpeg
     - assets/openai.png
     - .env
     - assets/sunny.png

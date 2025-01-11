@@ -86,8 +86,6 @@ class _MainPageState extends State<MainPage> {
         return 'assets/misty.png';
       case 'overcast clouds':
         return 'assets/cloudy.png';
-      case 'light snow':
-        return 'assets/snowy.png';
       default:
         return 'assets/deafult.png';
     }
